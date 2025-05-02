@@ -30,5 +30,5 @@ Este script automatiza completamente la configuración de red en sistemas basado
 ## 🧑‍💻 Uso
 
 ```bash
-chmod +x netplan-auto-config.sh
-sudo ./netplan-auto-config.sh
+chmod +x netplan.sh
+sudo ./netplan.sh
