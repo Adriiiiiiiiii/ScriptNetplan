@@ -25,10 +25,10 @@ Este script automatiza completamente la instalación de **Nextcloud** en servido
 
 Si la instalación de **MariaDB** falla durante la ejecución del script, puedes instalarla manualmente con:
 
-\`\`\`bash
+```bash
 sudo apt update
 sudo apt install mariadb-server
-\`\`\`
+```
 
 Después, **vuelve a ejecutar el script**.
 
@@ -36,7 +36,7 @@ Después, **vuelve a ejecutar el script**.
 
 ## ⚙️ Requisitos
 
-- Sistema basado en Debian/Ubuntu con \`apt\`
+- Sistema basado en Debian/Ubuntu con `apt`
 - Permisos de **sudo**
 - Acceso a la terminal interactiva
 - Dominio configurado que apunte al servidor
@@ -46,26 +46,27 @@ Después, **vuelve a ejecutar el script**.
 
 ## 🧑‍💻 Uso
 
-\`\`\`bash
+```bash
 chmod +x nextcloud-install.sh
 sudo ./nextcloud-install.sh
-\`\`\`
+```
 
 ---
 
 ## 🌐 Al finalizar
 
 Accede a tu Nextcloud desde:  
-\`https://<tu-dominio>\`
+`https://<tu-dominio>`
 
 En la interfaz, usa los datos configurados en el script:
 
 - **Base de datos**: el nombre introducido
 - **Usuario**: el usuario creado
 - **Contraseña**: la proporcionada
-- **Servidor BBDD**: \`localhost\`
+- **Servidor BBDD**: `localhost`
 
-Si estás en red local, añade al archivo \`/etc/hosts\` del cliente:
+Si estás en red local, añade al archivo `/etc/hosts` del cliente:
 
-\`\`\`
+```
 <IP-del-servidor>    <tu-dominio>
+```
