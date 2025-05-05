@@ -1,72 +1,83 @@
-# ☁️ Nextcloud Auto Install Script (PHP 8.2 + MariaDB + NGINX)
 
-Este script automatiza completamente la instalación de **Nextcloud** en servidores Linux con soporte para **PHP 8.2**, **MariaDB** y **NGINX**, ofreciendo una solución robusta y lista para producción.
+# ⚙️ Netplan Auto Config Script (IP fija + DHCP)
+
+Este script Bash automatiza completamente la configuración de red en sistemas Linux basados en **Netplan**, asignando una interfaz como **externa (DHCP)** y otra como **interna (IP fija)**. Está pensado para servidores que funcionan como **gateways**, **routers** o **puntos de acceso** en redes locales.
 
 ---
 
 ## 📋 ¿Qué hace este script?
 
-1. 🧹 **Elimina versiones antiguas de PHP** para evitar conflictos.
-2. ⚙️ **Añade repositorios necesarios** y actualiza el sistema.
-3. 🧰 **Instala dependencias clave**: PHP 8.2, MariaDB, NGINX, Certbot, etc.
-4. 🛠️ **Configura MariaDB**:
-   - Crea una base de datos y usuario específico para Nextcloud.
-5. 📦 **Descarga y prepara Nextcloud** en `/var/www/nextcloud`.
-6. 🔐 **Asigna permisos adecuados** a los archivos.
-7. 🌐 **Configura NGINX** para servir Nextcloud.
-8. 🔒 **Genera automáticamente un certificado SSL** con Let's Encrypt.
-9. ⚙️ **Ajusta parámetros de PHP** para mejorar el rendimiento.
-10. ⏲️ **Configura cron** para ejecutar tareas de mantenimiento.
-11. ✅ Al final, proporciona instrucciones claras para completar la instalación vía navegador.
+1. 🔍 **Detecta automáticamente las interfaces de red reales** (ignora loopback `lo`).
+2. ❓ **Solicita al usuario**:
+   - Una IP fija para la interfaz interna.
+   - Una IP de servidor DNS.
+3. 🧠 **Genera archivos de configuración Netplan**:
+   - La primera interfaz se configura como DHCP (externa).
+   - La segunda interfaz se configura con IP fija, DNS y una ruta por defecto.
+4. 🧪 Ejecuta `netplan try` para validar la configuración.
+5. 🚀 Aplica la configuración con `netplan apply`.
+6. 💾 **Realiza backups automáticos** de los archivos `.yaml` modificados.
+7. 📄 Muestra la configuración final por pantalla.
 
 ---
 
-## ⚠️ Importante
+## ⚠️ Requisitos
 
-Si la instalación de **MariaDB** falla durante la ejecución del script, puedes instalarla manualmente con:
-
-```bash
-sudo apt update
-sudo apt install mariadb-server
-```
-
-Después, **vuelve a ejecutar el script**.
-
----
-
-## ⚙️ Requisitos
-
-- Sistema basado en Debian/Ubuntu con `apt`
-- Permisos de **sudo**
-- Acceso a la terminal interactiva
-- Dominio configurado que apunte al servidor
-- Puertos 80/443 accesibles para Certbot
+- 🐧 Distribución basada en Ubuntu/Debian con Netplan (`Ubuntu 18.04+`, `Debian 10+`, etc.)
+- 🔐 Permisos de `sudo`
+- 🧑‍💻 Acceso a terminal interactiva (por los `read`)
+- 🌐 Al menos **dos interfaces de red activas** (además de `lo`)
 
 ---
 
 ## 🧑‍💻 Uso
 
 ```bash
-chmod +x nextcloud-install.sh
-sudo ./nextcloud-install.sh
+chmod +x netplan-auto-config.sh
+sudo ./netplan-auto-config.sh
+```
+
+Durante la ejecución, se te pedirá:
+
+- Una IP para la interfaz interna (ej. `192.168.50.1/24`)
+- Un servidor DNS (puede ser `8.8.8.8` o una IP interna)
+
+---
+
+## 📝 Ejemplo de archivo generado (`/etc/netplan/*.yaml`)
+
+```yaml
+network:
+  version: 2
+  ethernets:
+    enp0s3:
+      dhcp4: true
+    enp0s8:
+      dhcp4: false
+      addresses:
+        - 192.168.50.1/24
+      nameservers:
+        addresses:
+          - 8.8.8.8
+      routes:
+        - to: 0.0.0.0/0
+          via: 192.168.50.1
 ```
 
 ---
 
-## 🌐 Al finalizar
+## 🧯 Recuperación
 
-Accede a tu Nextcloud desde:  
-`https://<tu-dominio>`
+En caso de problemas, puedes restaurar los archivos desde los backups generados automáticamente (`*.bak` en `/etc/netplan/`).
 
-En la interfaz, usa los datos configurados en el script:
+---
 
-- **Base de datos**: el nombre introducido
-- **Usuario**: el usuario creado
-- **Contraseña**: la proporcionada
-- **Servidor BBDD**: `localhost`
+## 🟢 Resultado Final
 
-Si estás en red local, añade al archivo `/etc/hosts` del cliente:
+Al terminar, verás la configuración actual de red aplicada y un mensaje de éxito:
 
 ```
-<IP-del-servidor>    <tu-dominio>
+✅ Configuración de red aplicada correctamente.
 ```
+
+---
