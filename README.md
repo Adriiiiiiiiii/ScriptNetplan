@@ -1,34 +1,71 @@
-# 🛠️ Netplan Auto Config Script
+# ☁️ Nextcloud Auto Install Script (PHP 8.2 + MariaDB + NGINX)
 
-Este script automatiza completamente la configuración de red en sistemas basados en **Netplan (Ubuntu 18.04+, Debian, etc.)**, permitiendo que una interfaz se conecte por **DHCP (externa)** y otra funcione con una **IP fija (interna)**, actuando como servidor local o gateway.
+Este script automatiza completamente la instalación de **Nextcloud** en servidores Linux con soporte para **PHP 8.2**, **MariaDB** y **NGINX**, ofreciendo una solución robusta y lista para producción.
 
 ---
 
 ## 📋 ¿Qué hace este script?
 
-1. 🔍 **Detecta automáticamente las interfaces de red reales** (por ejemplo: `enp0s3`, `ens33`, etc.).
-2. ❓ **Solicita al usuario:**
-   - La IP fija para la interfaz interna.
-   - El DNS a utilizar.
-3. 🧠 **Genera archivos de configuración Netplan** para:
-   - Asignar **DHCP** a la interfaz externa.
-   - Asignar una **IP fija** a la interfaz interna con su DNS y ruta.
-4. 🧪 Ejecuta `netplan try` para validar.
-5. 🚀 Ejecuta `netplan apply` para aplicar.
-6. 💾 **Realiza un backup** automático de los archivos `.yaml` modificados.
+1. 🧹 **Elimina versiones antiguas de PHP** para evitar conflictos.
+2. ⚙️ **Añade repositorios necesarios** y actualiza el sistema.
+3. 🧰 **Instala dependencias clave**: PHP 8.2, MariaDB, NGINX, Certbot, etc.
+4. 🛠️ **Configura MariaDB**:
+   - Crea una base de datos y usuario específico para Nextcloud.
+5. 📦 **Descarga y prepara Nextcloud** en `/var/www/nextcloud`.
+6. 🔐 **Asigna permisos adecuados** a los archivos.
+7. 🌐 **Configura NGINX** para servir Nextcloud.
+8. 🔒 **Genera automáticamente un certificado SSL** con Let's Encrypt.
+9. ⚙️ **Ajusta parámetros de PHP** para mejorar el rendimiento.
+10. ⏲️ **Configura cron** para ejecutar tareas de mantenimiento.
+11. ✅ Al final, proporciona instrucciones claras para completar la instalación vía navegador.
+
+---
+
+## ⚠️ Importante
+
+Si la instalación de **MariaDB** falla durante la ejecución del script, puedes instalarla manualmente con:
+
+\`\`\`bash
+sudo apt update
+sudo apt install mariadb-server
+\`\`\`
+
+Después, **vuelve a ejecutar el script**.
 
 ---
 
 ## ⚙️ Requisitos
 
-- Distribución con Netplan (`Ubuntu 18.04+`, `Debian 10+`, etc.)
+- Sistema basado en Debian/Ubuntu con \`apt\`
 - Permisos de **sudo**
-- Conexión a terminal interactiva (por los `read`)
+- Acceso a la terminal interactiva
+- Dominio configurado que apunte al servidor
+- Puertos 80/443 accesibles para Certbot
 
 ---
 
 ## 🧑‍💻 Uso
 
-```bash
-chmod +x netplan.sh
-sudo ./netplan.sh
+\`\`\`bash
+chmod +x nextcloud-install.sh
+sudo ./nextcloud-install.sh
+\`\`\`
+
+---
+
+## 🌐 Al finalizar
+
+Accede a tu Nextcloud desde:  
+\`https://<tu-dominio>\`
+
+En la interfaz, usa los datos configurados en el script:
+
+- **Base de datos**: el nombre introducido
+- **Usuario**: el usuario creado
+- **Contraseña**: la proporcionada
+- **Servidor BBDD**: \`localhost\`
+
+Si estás en red local, añade al archivo \`/etc/hosts\` del cliente:
+
+\`\`\`
+<IP-del-servidor>    <tu-dominio>
